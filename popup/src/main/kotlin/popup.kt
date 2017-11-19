@@ -1,18 +1,18 @@
 import org.w3c.dom.Element
 import kotlin.browser.document
 
-const val hidePage = """
+const val CSS_HIDE_PAGE = """
     body > :not(.beastify-image) {
         display: none;
     }
 """
 
-const val scriptPath = "/content_script/build/classes/kotlin/main/min"
+const val SCRIPT_PATH = "/content_script/build/classes/kotlin/main/min"
 
 fun listenForClicks() {
     document.addEventListener("click", { e ->
 
-        val target = e.target as Element
+        val target = e.target as? Element ?: return@addEventListener
 
         fun beastNameToURL(beastName: String) = when (beastName) {
             "Frog" -> browser.extension.getURL("beasts/frog.jpg")
@@ -22,29 +22,26 @@ fun listenForClicks() {
         }
 
         fun beastify(tabs: Array<Tab>) {
-            browser.tabs.insertCSS(CssDetails(hidePage))
+            browser.tabs.insertCSS(CssDetails(CSS_HIDE_PAGE))
                     .then({
                         val url = beastNameToURL(target.textContent as String)
                         browser.tabs.sendMessage(tabs[0].id, jsObject {
                             command = "beastify"
                             beastURL = url
-                        })
+                        } as Any)
                     })
         }
 
         fun reset(tabs: Array<Tab>) {
-            browser.tabs.removeCSS(CssDetails(hidePage))
+            browser.tabs.removeCSS(CssDetails(CSS_HIDE_PAGE))
                     .then({
                         browser.tabs.sendMessage(tabs[0].id, jsObject {
                             command = "reset"
-                        })
+                        } as Any)
                     })
         }
 
-        fun reportError(error: Any) {
-            console.error("Could not beastify: $error")
-        }
-
+        fun reportError(error: Any) = console.error("Could not beastify: $error")
 
         val callback = when {
             target.classList.contains("beast") -> ::beastify
@@ -66,9 +63,9 @@ fun reportExecuteScriptError(error: Throwable) {
 
 
 fun main(args: Array<String>) {
-    browser.tabs.executeScript(ScriptDefinition("$scriptPath/kotlin.js"))
+    browser.tabs.executeScript(ScriptDefinition("$SCRIPT_PATH/kotlin.js"))
             .then({
-                browser.tabs.executeScript(ScriptDefinition("$scriptPath/content_script.js"))
+                browser.tabs.executeScript(ScriptDefinition("$SCRIPT_PATH/content_script.js"))
                         .then({ listenForClicks() })
             })
             .catch(::reportExecuteScriptError)
