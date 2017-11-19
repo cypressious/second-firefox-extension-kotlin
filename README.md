@@ -4,7 +4,7 @@ This is a port of the ["Your second WebExtension"](https://developer.mozilla.org
 
 - JDK 8
 - node.js
-- 
+- `npm install --global web-ext`
 
 ## Build instructions
 
