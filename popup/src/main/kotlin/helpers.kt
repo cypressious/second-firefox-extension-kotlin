@@ -25,7 +25,8 @@ class ScriptDefinition(val file: String)
 class CssDetails(val code: String)
 class QueryInfo(active: Boolean, currentWindow: Boolean)
 
-external open class Object {
+inline fun jsObject(init: dynamic.() -> Unit): dynamic {
+    val o = js("{}")
+    init(o)
+    return o
 }
-
-fun jsObject(init: dynamic.() -> Unit): dynamic = (Object()).apply(init)
