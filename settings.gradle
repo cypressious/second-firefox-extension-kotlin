@@ -1,0 +1,3 @@
+rootProject.name = 'kt-beastify'
+
+include ':popup', ':content_script'
