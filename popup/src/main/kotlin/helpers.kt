@@ -9,10 +9,10 @@ external class Browser {
 
 external class Tabs {
     fun executeScript(def: Script): Promise<List<Any>>
-    fun insertCSS(details: CssDetails): Promise<Unit>
-    fun removeCSS(details: CssDetails): Promise<Unit>
-    fun sendMessage(id: Int, any: Any): Any
-    fun query(info: QueryInfo): Promise<Array<Tab>>
+    fun insertCSS(id: Int, details: CssDetails): Promise<Unit>
+    fun removeCSS(id: Int, details: CssDetails): Promise<Unit>
+    fun sendMessage(id: Int, message: dynamic): Any
+    fun query(info: Query): Promise<Array<Tab>>
 }
 
 external class Extension {
@@ -23,10 +23,4 @@ class Tab(val id: Int)
 
 class Script(val file: String)
 class CssDetails(val code: String)
-class QueryInfo(val active: Boolean, val currentWindow: Boolean)
-
-inline fun jsObject(init: dynamic.() -> Unit): dynamic {
-    val o = js("{}")
-    init(o)
-    return o
-}
+class Query(val active: Boolean, val currentWindow: Boolean)

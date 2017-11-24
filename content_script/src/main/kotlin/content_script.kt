@@ -12,7 +12,7 @@ fun main(args: Array<String>) {
 
     browser.runtime.onMessage.addListener { message ->
         if (message.command === "beastify") {
-            insertBeast(message.beastURL)
+            insertBeast(message.beastURL as String)
         } else if (message.command === "reset") {
             removeExistingBeasts()
         }

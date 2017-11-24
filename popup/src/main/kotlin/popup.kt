@@ -2,11 +2,6 @@ import org.w3c.dom.Element
 import kotlin.browser.document
 import kotlin.js.Promise
 
-const val CSS_HIDE_PAGE = """
-    body > :not(.beastify-image) {
-        display: none;
-    }
-"""
 
 const val SCRIPT_PATH = "/content_script/build/classes/kotlin/main/min"
 
@@ -21,51 +16,51 @@ fun main(args: Array<String>) {
             .catch(::reportExecuteScriptError)
 }
 
+fun getUrl(name: String?): String {
+    val relative = "beasts/${name?.toLowerCase()}.jpg"
+    return browser.extension.getURL(relative)
+}
+
 fun listenForClicks() {
     document.addEventListener("click", { e ->
-
         val target = e.target as? Element ?: return@addEventListener
 
-        fun beastNameToURL(beastName: String) = when (beastName) {
-            "Frog" -> browser.extension.getURL("beasts/frog.jpg")
-            "Snake" -> browser.extension.getURL("beasts/snake.jpg")
-            "Turtle" -> browser.extension.getURL("beasts/turtle.jpg")
-            else -> null
-        }
-
-        fun beastify(tabs: Array<Tab>) {
-            browser.tabs.insertCSS(CssDetails(CSS_HIDE_PAGE))
-                    .then({
-                        val url = beastNameToURL(target.textContent as String)
-                        browser.tabs.sendMessage(tabs[0].id, jsObject {
-                            command = "beastify"
-                            beastURL = url
-                        } as Any)
-                    })
-        }
-
-        fun reset(tabs: Array<Tab>) {
-            browser.tabs.removeCSS(CssDetails(CSS_HIDE_PAGE))
-                    .then({
-                        browser.tabs.sendMessage(tabs[0].id, jsObject {
-                            command = "reset"
-                        } as Any)
-                    })
-        }
-
-        fun reportError(error: Any) = console.error("Could not beastify: $error")
-
-        val callback = when {
-            target.classList.contains("beast") -> ::beastify
-            target.classList.contains("reset") -> ::reset
-            else -> return@addEventListener
-        }
-
-        browser.tabs.query(QueryInfo(active = true, currentWindow = true))
-                .then(callback)
+        browser.tabs.query(Query(active = true, currentWindow = true))
+                .then({ tabs -> handleClick(target, tabs[0].id) })
                 .catch(::reportError)
     })
 }
+
+const val CSS_HIDE_PAGE = """
+    body > :not(.beastify-image) {
+        display: none;
+    }
+"""
+
+fun handleClick(target: Element, id: Int) {
+    if (target.classList.contains("beast")) {
+        val url = getUrl(target.textContent)
+
+        browser.tabs.insertCSS(id, CssDetails(CSS_HIDE_PAGE))
+        browser.tabs.sendMessage(id, jsObject {
+            command = "beastify"
+            beastURL = url
+        })
+    } else {
+        browser.tabs.removeCSS(id, CssDetails(CSS_HIDE_PAGE))
+        browser.tabs.sendMessage(id, jsObject {
+            command = "reset"
+        })
+    }
+}
+
+inline fun jsObject(init: dynamic.() -> Unit): dynamic {
+    val o = js("{}")
+    init(o)
+    return o
+}
+
+fun reportError(error: Any) = console.error("Could not beastify: $error")
 
 fun reportExecuteScriptError(error: Throwable) {
     document.querySelector("#popup-content")?.classList?.add("hidden")
