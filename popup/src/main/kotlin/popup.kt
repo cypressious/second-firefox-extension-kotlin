@@ -1,5 +1,6 @@
 import org.w3c.dom.Element
 import kotlin.browser.document
+import kotlin.js.Promise
 
 const val CSS_HIDE_PAGE = """
     body > :not(.beastify-image) {
@@ -63,11 +64,11 @@ fun reportExecuteScriptError(error: Throwable) {
 
 
 fun main(args: Array<String>) {
-    browser.tabs.executeScript(ScriptDefinition("$SCRIPT_PATH/kotlin.js"))
-            .then({
-                browser.tabs.executeScript(ScriptDefinition("$SCRIPT_PATH/content_script.js"))
-                        .then({ listenForClicks() })
-            })
+    Promise.all(arrayOf(
+            browser.tabs.executeScript(ScriptDefinition("$SCRIPT_PATH/kotlin.js")),
+            browser.tabs.executeScript(ScriptDefinition("$SCRIPT_PATH/content_script.js"))
+    ))
+            .then({ listenForClicks() })
             .catch(::reportExecuteScriptError)
 }
 
