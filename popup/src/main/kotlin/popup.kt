@@ -12,8 +12,10 @@ const val SCRIPT_PATH = "/content_script/build/classes/kotlin/main/min"
 
 fun main(args: Array<String>) {
     Promise.all(arrayOf(
-            browser.tabs.executeScript(ScriptDefinition("$SCRIPT_PATH/kotlin.js")),
-            browser.tabs.executeScript(ScriptDefinition("$SCRIPT_PATH/content_script.js"))
+            browser.tabs.executeScript(
+                    Script("$SCRIPT_PATH/kotlin.js")),
+            browser.tabs.executeScript(
+                    Script("$SCRIPT_PATH/content_script.js"))
     ))
             .then({ listenForClicks() })
             .catch(::reportExecuteScriptError)
