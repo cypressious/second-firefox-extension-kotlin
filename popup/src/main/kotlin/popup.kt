@@ -10,6 +10,15 @@ const val CSS_HIDE_PAGE = """
 
 const val SCRIPT_PATH = "/content_script/build/classes/kotlin/main/min"
 
+fun main(args: Array<String>) {
+    Promise.all(arrayOf(
+            browser.tabs.executeScript(ScriptDefinition("$SCRIPT_PATH/kotlin.js")),
+            browser.tabs.executeScript(ScriptDefinition("$SCRIPT_PATH/content_script.js"))
+    ))
+            .then({ listenForClicks() })
+            .catch(::reportExecuteScriptError)
+}
+
 fun listenForClicks() {
     document.addEventListener("click", { e ->
 
@@ -61,14 +70,3 @@ fun reportExecuteScriptError(error: Throwable) {
     document.querySelector("#error-content")?.classList?.remove("hidden")
     console.error("Failed to execute beastify content script: ${error.message}")
 }
-
-
-fun main(args: Array<String>) {
-    Promise.all(arrayOf(
-            browser.tabs.executeScript(ScriptDefinition("$SCRIPT_PATH/kotlin.js")),
-            browser.tabs.executeScript(ScriptDefinition("$SCRIPT_PATH/content_script.js"))
-    ))
-            .then({ listenForClicks() })
-            .catch(::reportExecuteScriptError)
-}
-
