@@ -1,14 +1,13 @@
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.asList
-import org.w3c.dom.get
 import kotlin.browser.document
 import kotlin.browser.window
 
 fun main(args: Array<String>) {
-    if (window["hasRun"] == true) {
+    if (window.asDynamic().hasRun == true) {
         return
     }
-    window.asDynamic()["hasRun"] = true
+    window.asDynamic().hasRun = true
 
     browser.runtime.onMessage.addListener { message ->
         if (message.command === "beastify") {
