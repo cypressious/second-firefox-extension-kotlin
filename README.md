@@ -1,5 +1,7 @@
 This is a port of the ["Your second WebExtension"](https://developer.mozilla.org/en-US/Add-ons/WebExtensions/Your_second_WebExtension) for Firefox to Kotlin.
 
+Blog post: https://medium.com/@Cypressious/your-second-firefox-extension-in-kotlin-bafd91d87c41
+
 ## Requirements
 
 - JDK 8
