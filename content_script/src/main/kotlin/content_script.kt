@@ -1,5 +1,6 @@
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.asList
+import webextensions.browser
 import kotlin.browser.document
 import kotlin.browser.window
 
@@ -9,7 +10,7 @@ fun main(args: Array<String>) {
     }
     window.asDynamic().hasRun = true
 
-    browser.runtime.onMessage.addListener { message ->
+    browser.runtime.onMessage.addListener { message,_,_ ->
         if (message.command === "beastify") {
             insertBeast(message.beastURL as String)
         } else if (message.command === "reset") {

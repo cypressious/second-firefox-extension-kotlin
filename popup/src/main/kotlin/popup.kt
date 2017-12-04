@@ -1,16 +1,20 @@
+import extensionTypes.InjectDetails
 import org.w3c.dom.Element
+import tabs.QueryInfo
+import webextensions.browser
 import kotlin.browser.document
 import kotlin.js.Promise
-
 
 const val SCRIPT_PATH = "/content_script/build/classes/kotlin/main/min"
 
 fun main(args: Array<String>) {
     Promise.all(arrayOf(
             browser.tabs.executeScript(
-                    Script("$SCRIPT_PATH/kotlin.js")),
+                    details = InjectDetails(file = "$SCRIPT_PATH/kotlin.js")),
             browser.tabs.executeScript(
-                    Script("$SCRIPT_PATH/content_script.js"))
+                    details = InjectDetails(file = "$SCRIPT_PATH/declarations.js")),
+            browser.tabs.executeScript(
+                    details = InjectDetails(file = "$SCRIPT_PATH/content_script.js"))
     ))
             .then({ listenForClicks() })
             .catch(::reportExecuteScriptError)
@@ -25,8 +29,8 @@ fun listenForClicks() {
     document.addEventListener("click", { e ->
         val target = e.target as? Element ?: return@addEventListener
 
-        browser.tabs.query(Query(active = true, currentWindow = true))
-                .then({ tabs -> handleClick(target, tabs[0].id) })
+        browser.tabs.query(QueryInfo(active = true, currentWindow = true))
+                .then({ tabs -> handleClick(target, tabs[0].id!!) })
                 .catch(::reportError)
     })
 }
@@ -41,13 +45,13 @@ fun handleClick(target: Element, id: Int) {
     if (target.classList.contains("beast")) {
         val url = getUrl(target.textContent)
 
-        browser.tabs.insertCSS(id, CssDetails(CSS_HIDE_PAGE))
+        browser.tabs.insertCSS(id, InjectDetails(code = CSS_HIDE_PAGE))
         browser.tabs.sendMessage(id, jsObject {
             command = "beastify"
             beastURL = url
         })
     } else {
-        browser.tabs.removeCSS(id, CssDetails(CSS_HIDE_PAGE))
+        browser.tabs.removeCSS(id, InjectDetails(code = CSS_HIDE_PAGE))
         browser.tabs.sendMessage(id, jsObject {
             command = "reset"
         })
