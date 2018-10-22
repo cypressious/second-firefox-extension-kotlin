@@ -6,7 +6,7 @@ Blog post: https://medium.com/@Cypressious/your-second-firefox-extension-in-kotl
 
 - JDK 8
 - node.js
-- `npm install --global web-ext`
+- `npm install npx web-ext`
 
 ## Build instructions
 
@@ -17,7 +17,7 @@ Blog post: https://medium.com/@Cypressious/your-second-firefox-extension-in-kotl
 In a separate terminal
 
 ```
-web-ext run
+npx web-ext run
 ```
 
 ## Working in an IDE
@@ -26,4 +26,4 @@ Open IntelliJ IDEA and import the project as a Gradle project.
 
 Create a run configuration for the Gradle task `runDceKotlinJs` with the arguments `--continuous`. Execute the run configuration for continuous building of the Kotlin code.
 
-Run `web-ext run` in a terminal to launch a Firefox instance with the extension installed.
+Run `npx web-ext run` in a terminal to launch a Firefox instance with the extension installed.
