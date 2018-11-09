@@ -18,8 +18,8 @@ allprojects {
     }
 
     dependencies {
-        compile "org.jetbrains.kotlin:kotlin-stdlib-js:" + Versions.org_jetbrains_kotlin 
-        compile 'com.github.cypressious.kotlin-webextensions-declarations:webextensions-declarations:v0.1'
+        compile Libs.kotlin_stdlib_js 
+        compile Libs.webextensions_declarations
     }
 
     compileKotlin2Js {

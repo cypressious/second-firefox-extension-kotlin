@@ -5,7 +5,7 @@ import webextensions.browser
 import kotlin.browser.document
 import kotlin.js.Promise
 
-const val SCRIPT_PATH = "/content_script/build/classes/kotlin/main/min"
+const val SCRIPT_PATH = "/content_script/build/kotlin-js-min/main"
 
 fun main(args: Array<String>) {
     Promise.all(arrayOf(

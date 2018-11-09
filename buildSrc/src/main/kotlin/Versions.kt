@@ -5,13 +5,13 @@
  *
  * YOU are responsible for updating manually the dependency version. */
 object Versions {
-    const val webextensions_declarations: String = "v0.1" //available: "v0.3" 
+    const val webextensions_declarations: String = "v0.3"
 
-    const val build_scan_plugin: String = "1.16" //available: "2.0.2" 
+    const val build_scan_plugin: String = "1.16"
 
     const val gradle_kotlin_dsl_libs: String = "0.2.6" 
 
-    const val org_jetbrains_kotlin: String = "1.2.0" //available: "1.3.0" 
+    const val org_jetbrains_kotlin: String = "1.3.0"
 
 
     const val gradleRunningVersion: String = "4.3.1"
