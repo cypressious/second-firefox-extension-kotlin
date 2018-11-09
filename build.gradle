@@ -1,13 +1,10 @@
-buildscript {
-    ext.kotlin_version = '1.2.0'
-
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-    }
+plugins {
+    id("com.gradle.build-scan") version "1.16"
+    id("jmfayard.github.io.gradle-kotlin-dsl-libs") version "0.2.6"  // $ ./gradlew syncLibs
+    id("kotlin2js") apply(false)
+    id("kotlin-dce-js") apply(false)
 }
+
 
 version '1.0-SNAPSHOT'
 
@@ -21,12 +18,26 @@ allprojects {
     }
 
     dependencies {
-        compile "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlin_version"
-        compile 'com.github.cypressious.kotlin-webextensions-declarations:webextensions-declarations:v0.1'
+        compile Libs.kotlin_stdlib_js 
+        compile Libs.webextensions_declarations
     }
 
     compileKotlin2Js {
         kotlinOptions.sourceMap = true
         kotlinOptions.sourceMapEmbedSources = "always"
     }
+}
+
+
+
+
+buildScan {
+    setTermsOfServiceUrl("https://gradle.com/terms-of-service")
+    setTermsOfServiceAgree("yes")
+    publishAlways()
+}
+
+wrapper {
+    distributionType = Wrapper.DistributionType.ALL
+    setGradleVersion(Versions.gradleCurrentVersion)
 }
